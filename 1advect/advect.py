@@ -1,9 +1,5 @@
-from xml import dom
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.optimize import fsolve
-from functools import partial
-from scipy import optimize
 
 def smooth(x):
     return np.sin(2.0*np.pi*x)
@@ -11,11 +7,11 @@ def smooth(x):
 ng = 201;
 x  = np.linspace(0,1,ng)
 h = 1/(ng-1);
-u  = smooth(x)
-ue = smooth(x)
+u  = smooth(x)  # initialize the solution vector
+ue = smooth(x) # exact solution at t =0
 plot_freq = 1
-cfl = 0.9
-t = 0.0
+cfl = 1.0
+t = 0.0  # initial time
 # plot initial condition
 if plot_freq >0:
     fig = plt.figure()
@@ -30,7 +26,7 @@ if plot_freq >0:
     wait = input("Press enter to continue ")
 
 Tf = 1.0; # final time
-dt = cfl * h
+dt = cfl * h   # h is dx
 
 while t < Tf:
     lam = dt/h
@@ -40,10 +36,10 @@ while t < Tf:
     # warning! uold = u is a wrong assignment
     uold = np.copy(u)
 
-    for i in range(1, ng):
-        u[i] = uold[i] - lam * (uold[i] - uold[i-1])
+    for i in range(0, ng-1):
+        u[i] = uold[i] - lam * (uold[i+1] - uold[i])
 
-    u[0] = u[-1];
+    u[-1] = u[0];  # periodic  boundary condition
     t +=dt
     if plot_freq > 0:
         ue = smooth(x-t)
@@ -53,5 +49,14 @@ while t < Tf:
         plt.draw(); plt.pause(0.1)
     
 plt.show()
+
+ue = smooth(x-t)
+plt.plot(x, u,'ko',fillstyle='none',label='UW')
+plt.plot(x, ue,'-',fillstyle='none',label='Exact')
+plt.xlabel('x')
+plt.ylabel('u')
+plt.legend();
+plt.grid(True, linestyle = '--')
+plt.savefig('u_sapprox.pdf')
 # u_t + c u_x = 0,  u(x,t ) = g(x-ct)
 # u(x,0) = g(x)   
