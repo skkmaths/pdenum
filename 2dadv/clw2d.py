@@ -64,11 +64,11 @@ ygrid, xgrid = np.meshgrid(ygrid1, xgrid1)
 #------------To save solution--------------------------------------------
 def getfilename(file, fileid):
     if fileid <10:
-        file = file +"00"+str(fileid)+".plt"
+        file = file +"00"+str(fileid)+".vtk"
     elif fileid <99:
-        file = file +"0"+str(fileid)+".plt"
+        file = file +"0"+str(fileid)+".vtk"
     else:
-        file =file+str(fileid)+".plt"
+        file =file+str(fileid)+".vtk"
     return file
 # save solution to a file
 def savesol(t, var_u):
@@ -86,14 +86,29 @@ def savesol(t, var_u):
     filename = "sol"
     filename = getfilename(filename, fileid)
     file = open("./sol/"+filename,"a")
-    file.write('TITLE = "Linear advectino equation" \n')
-    file.write('VARIABLES = "x", "y", "sol" \n')
-    file.write("ZONE STRANDID=1, SOLUTIONTIME= "+ str(t)+ ", I= "+str(nx)+", J ="+str(ny)+", DATAPACKING=POINT \n")
-    for j in range(2, ny+3):
-        for i in range(2, nx+3):
-            x = xmin + (i-2)*dx 
-            y = ymin + (j-2)*dy
-            file.write(f"{x}, {y}, {var_u[i, j]}\n")
+
+    file.write("# vtk DataFile Version 3.0\n")
+    file.write("Solution data\n")
+    file.write("ASCII\n")
+    file.write("DATASET STRUCTURED_GRID\n")
+    file.write(f"DIMENSIONS {nx+1} {ny+1} 1\n")
+        
+    # Write grid points
+    file.write(f"POINTS {(nx +1) * (ny+1)} float\n")
+    for j in range(ny+1):
+        y = ymin + j * dy
+        for i in range(nx +1):
+            x = xmin + i * dx
+            file.write(f"{x} {y} 0.0\n")
+        
+    # Write solution data at grid points
+    file.write(f"POINT_DATA {(nx +1) * (ny+1)}\n")
+    file.write("SCALARS solution float 1\n")
+    file.write("LOOKUP_TABLE default\n")
+    for j in range(ny + 1 ):
+        for i in range(nx + 1):
+            file.write(f"{var_u[i+2, j+2]}\n")
+
     fileid = fileid + 1
 # Initialize plot
 def init_plot(ax1, ax2, u0):
