@@ -203,7 +203,7 @@ while t < Tf:
 
 # print final data
 savesol(t,v)
-print('it,t,min,max =', it, t, v[2:nx+3,2:ny+3].min(), v[2:nx+3,2:ny+3].max())
+print('iter,t,min,max =', iter, t, v[2:nx+3,2:ny+3].min(), v[2:nx+3,2:ny+3].max())
 print('solution saved to .plt files')
 
 if args.plot_freq > 0: 
