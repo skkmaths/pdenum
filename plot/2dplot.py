@@ -54,17 +54,17 @@ X, Y = np.meshgrid(x_grid, y_grid)
 
 # Plot the pseudocolor plot
 plt.figure(figsize=(8, 6))
-pcolor_plot = plt.pcolormesh(X, Y, z_matrix, shading='auto', cmap='jet')
+pcolor_plot = plt.contour(X, Y, z_matrix, levels = 20)
 
 # Add a color bar to indicate the solution values
 # change apsect to more to make it thinner
-cbar = plt.colorbar(pcolor_plot, orientation='horizontal', pad=0.07, shrink=1, aspect = 40 )
-cbar.set_label('Solution')
+cbar = plt.colorbar(pcolor_plot, orientation='horizontal', pad=0.07, shrink=0.58, aspect = 40 )
+#cbar.set_label('Solution')
 
 # Set plot labels and title
 plt.xlabel('X')
 plt.ylabel('Y')
-plt.title('Pseudocolor Plot of Solution on Structured Grid')
+plt.title('Solution')
 
 # Set aspect ratio to preserve the data's scale
 plt.gca().set_aspect('equal', adjustable='box')
